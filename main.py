@@ -24,21 +24,82 @@ from sys import getsizeof
 
 
 class inode:
+    def __init__(self):
+        self.nome = ""
+        self.criador = ""
+        self.dono = ""
+        self.tamanho = 0
+        self.data_criacao = ""
+        self.data_modificacao = ""
+        self.permissoes = ""
+        self.apontadores_blocos = []
+        self.apontador_inode = None
+
+class bloco:
+
     pass
 
-class block:
-    pass
+class disco:
+    def __init__(self, tamanho_maximo: int, tamanho_blocos: int, tamanho_inodes: int):
+        self.tamanho_maximo = tamanho_maximo
+        self.tamanho_blocos = tamanho_blocos
+        self.tamanho_inodes = tamanho_inodes
+        self.blocos = []
+        self.inodes = []
+        self.bitmap_blocos_livres = []
+        self.bitmap_blocos_ocupados = []
+        self.bitmap_inodes_livres = []
+        self.bitmap_inodes_ocupados = []
 
-class disk:
-    pass
 
-class inodes:
-    pass
+class sistema_arquivos:
+    def __init__(self, disco: disco):
+        self.disco = disco
+        self.diretorio_atual = "/"
 
-class blocks:
-    pass
+    def criar_arquivo(self):
+        pass
 
-class filesystem:
-    pass
+    def remover_arquivo(self):
+        pass
 
-print('trabalho pronto 100%. confia.')
+    def escrever_arquivo(self):
+        pass
+
+    def ler_arquivo(self):
+        pass
+
+    def copiar_arquivo(self):
+        pass
+
+    def renomear_arquivo(self):
+        pass
+
+    def criar_diretorio(self):
+        pass
+
+    def listar_diretorio(self):
+        pass
+
+    def remover_diretorio(self):
+        pass
+
+    def trocar_diretorio(self):
+        pass
+
+    def renomear_diretorio(self):
+        pass
+
+class usuario:
+    def __init__(self, nome: str, senha: str):
+        self.nome = nome
+        self.senha = senha
+
+
+class sistema_operacional:
+    def __init__(self):
+        self.disco = disco(256, 4, 4)
+        self.arquivos = sistema_arquivos(self.disco)
+        self.usuarios = []
+
+
