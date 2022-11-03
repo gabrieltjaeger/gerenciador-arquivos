@@ -102,4 +102,20 @@ class sistema_operacional:
         self.arquivos = sistema_arquivos(self.disco)
         self.usuarios = []
 
+class usuario:
+    usuarios = {}
+    def __init__(self, nome, senha):    
+        self.nome = nome
+        self.senha = senha
+        
+    def criarConta():
+        nome = input("Qual será seu nome de usuário? {}")
+        senha = input("Qual sua senha? {}")
+        usuario.usuarios[nome]=senha
 
+    def logarConta():
+        nome = input("Usuario: {}")
+        senha = input("Senha: {}")
+        if nome in usuario.usuarios:
+            if usuario.usuarios[nome] == senha:
+                pass
