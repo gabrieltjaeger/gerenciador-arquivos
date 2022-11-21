@@ -22,6 +22,7 @@
 # 4. bitmap de i-nodes ocupados
 # import datetime
 from datetime import datetime
+import os
 
 
 class usuario:
@@ -54,7 +55,8 @@ class inode:
         while inode_atual.apontador_inode_pai is not None:
             caminho = '/' + inode_atual.nome + caminho
             inode_atual = inode_atual.apontador_inode_pai
-        caminho = '/' + inode_atual.nome + caminho
+        else:
+          caminho = '/' + inode_atual.nome + caminho
         return caminho
 
     def __repr__(self) -> str:
@@ -85,15 +87,32 @@ class sistema_arquivos:
         self.criar_diretorio("root", "root", False)
         self.diretorio_atual = self.disco.inodes[0]
 
-    def criar_arquivo(self):
-        pass
+    def criar_arquivo(self, nome_arquivo: str, criador: str):
+        if str(self.diretorio_atual.apontador_inodes).find(nome_arquivo) != -1: ## não deixa criar mais de um arquvio com o mesmo nome
+            raise Exception
+        novo_arquivo = open(nome_arquivo, "w")
+        novo_arquivo.close()
+        novo_inode = inode(nome_arquivo, criador, None, self.diretorio_atual)
+        self.disco.inodes.append(novo_inode)
+        self.diretorio_atual.apontador_inodes.append(novo_inode)
 
-    def remover_arquivo(self):
-        pass
+    def remover_arquivo(self, nome_arquivo: str):
+        if str(self.diretorio_atual.apontador_inodes).find(nome_arquivo) != -1:
+            os.remove(nome_arquivo) ##não sei se pode...
+            for inode in self.diretorio_atual.apontador_inodes:
+                if inode.nome == nome_arquivo:
+                    self.diretorio_atual.apontador_inodes.remove(inode)
+                    self.disco.inodes.remove(inode)
+        else:
+            raise Exception
 
-    def escrever_arquivo(self):
-        pass
-
+    def escrever_arquivo(self, conteudo: str, arquivo: inode):
+        if str(self.diretorio_atual.apontador_inodes).find(str(arquivo)) != -1: ## não deixa escrever em arquivos que não estão no diretório atual
+          abrir_arquivo = open(arquivo, "a")
+          abrir_arquivo.write(conteudo)
+          abrir_arquivo.close()
+        else:
+          raise Exception
     def ler_arquivo(self):
         pass
 
@@ -117,7 +136,6 @@ class sistema_arquivos:
 
 
 
-
     def listar_diretorio(self):
         for inode in self.diretorio_atual.apontador_inodes:
             print(inode.nome)
@@ -128,18 +146,17 @@ class sistema_arquivos:
 
     def trocar_diretorio(self, caminho: list, caminho_inicial: inode = None):
         destino = self.percorre_caminho_e_retorna_inode(caminho, caminho_inicial)
-        print(destino)
         if destino == False:
             return False
         if destino is not None:
-            self.diretorio_atual = destino
-            return True
+          novodiretorio = [i for i in self.diretorio_atual.apontador_inodes if i.nome == destino] ## verifica se o destino é um diretório, se existe um inode com o nome do destino
+          self.diretorio_atual = novodiretorio[0] ## o erro do cd é aqui
+          return True
         return False
 
     def percorre_caminho_e_retorna_inode(self, caminho: list, caminho_inicial: inode = None) -> inode:
-        print(caminho)
+        return caminho[0]
         
-
 
 
     def renomear_diretorio(self):
@@ -172,65 +189,57 @@ def main():
     so.logar("admin", "admin")
     while (comando := input(f"{so.usuario_atual}:~{so.arquivos.diretorio_atual}$ ")) != "sair":
         comando = comando.split(" ")
-        if comando[0] == "touch":
+        if comando[0] == "touch": ## cria um arquivo vazio (acho que tá funcionando direitinho)
             try:
-                so.arquivos.criar_arquivo(comando[1], so.usuario_atual, True)
+                so.arquivos.criar_arquivo(comando[1], so.usuario_atual)
             except:
-                print("erro ao criar arquivo")
-                print("uso: touch <nome>")
+                print("erro ao criar arquivo\nuso: touch <nome>")
         elif comando[0] == "rm":
             try:
                 so.arquivos.remover_arquivo(comando[1])
             except:
-                print("erro ao remover arquivo")
-                print("uso: rm <nome>")
-        elif comando[0] == "echo":
+                print("erro ao remover arquivo\nuso: rm <nome>")
+        elif comando[0] == "echo": ## tem que fazer funcionar para mais de uma palavra
             try:
                 so.arquivos.escrever_arquivo(comando[1], comando[2])
             except:
-                print("erro ao escrever no arquivo")
-                print("uso: echo \"<conteudo>\" >> <nome>")
+                print("erro ao escrever no arquivo\nuso: echo \"<conteudo>\" >> <nome>")
         elif comando[0] == "cat":
             try:
                 so.arquivos.ler_arquivo(comando[1])
             except:
-                print("erro ao ler arquivo")
-                print("uso: cat <nome>")
+                print("erro ao ler arquivo\nuso: cat <nome>")
         elif comando[0] == "cp":
             try:
                 so.arquivos.copiar_arquivo(comando[1], comando[2])
             except:
-                print("erro ao copiar arquivo")
-                print("uso: cp <nome> <novo_nome>")
+                print("erro ao copiar arquivo\nuso: cp <nome> <destino>")
         elif comando[0] == "mv":
             try:
                 so.arquivos.renomear_arquivo(comando[1], comando[2])
             except:
-                print("erro ao renomear arquivo")
-                print("uso: mv <nome> <novo_nome>")
+                print("erro ao renomear arquivo\nuso: mv <nome> <novo_nome>")
         elif comando[0] == "mkdir":
             try:
                 so.arquivos.criar_diretorio(comando[1], so.usuario_atual, True)
+                print(inode('teste', 'admin', None, None))
             except:
-                print("erro ao criar diretório")
-                print("uso: mkdir <nome>")
+                print("erro ao criar diretório\nuso: mkdir <nome>")
         elif comando[0] == "ls":
             try:
                 so.arquivos.listar_diretorio()
             except:
-                print("erro ao listar diretório")
-                print("uso: ls")
+                print("erro ao listar diretório\nuso: ls")
         elif comando[0] == "rmdir":
             try:
                 so.arquivos.remover_diretorio(comando[1]) # só funciona se o diretório estiver vazio
             except:
-                print("erro ao remover diretório")
-                print("uso: rmdir <nome>")
+                print("erro ao remover diretório\nuso: rmdir <nome>")
         elif comando[0] == "cd":
             try:
                 caminho = comando[1] if len(comando) > 1 else " " ### TO DO -- FAZER ISSO DE UMA FORMA MAIS ELEGANTE, FUNÇÃO QUE RETORNA O CAMINHO E QUE SERÁ 
                                                                   ### CHAMADA DENTRO DO SISTEMA DE ARQUIVOS E NÃO NA SELEÇÃO DE COMANDOS.
-            
+
                 if caminho[0] == "/":
                     print("Arquivo ou diretório inexistente")
                     raise Exception
@@ -240,15 +249,13 @@ def main():
                     caminho = [caminho]
                 so.arquivos.trocar_diretorio(caminho)
             except Exception as e:
-                print(e)
-                print("erro ao trocar diretório")
-                print("uso: cd <nome>")
+                print(e,"\nerro ao trocar diretório\nuso: cd <nome>")
         elif comando[0] == "mvdir":
             try:
                 so.arquivos.renomear_diretorio(comando[1], comando[2])
             except:
-                print("erro ao renomear diretório")
-                print("uso: mvdir <nome> <novo_nome>")
+                print("erro ao renomear diretório\nuso: mvdir <nome> <novo_nome>")
+
         else:
             print("comando inválido")
 
