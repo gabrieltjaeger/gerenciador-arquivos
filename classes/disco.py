@@ -1,7 +1,3 @@
-class bloco:
-
-    pass
-
 class disco:
     def __init__(self, tamanho_maximo: int, tamanho_blocos: int, tamanho_inodes: int):
         self.tamanho_maximo = tamanho_maximo
