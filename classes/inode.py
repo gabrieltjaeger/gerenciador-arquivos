@@ -50,4 +50,7 @@ class inode:
         
     def adicionar_inode(self, inode):
         self.apontador_inodes.append(inode)
+
+    def adicionar_bloco(self, bloco: bloco):
+        self.apontador_blocos.append(bloco)
     

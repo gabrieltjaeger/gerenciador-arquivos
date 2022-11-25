@@ -10,8 +10,8 @@ class sistema_operacional:
         self.usuario_atual = None
 
     def criar_usuario(self, nome: str, senha: str):
-        for usuario in self.usuarios:
-            if usuario.nome == nome:
+        for user in self.usuarios:
+            if user.nome == nome:
                 print("Já existe um usuário com esse nome. Tente novamente.")
                 return False
         self.usuarios.append(usuario(nome, senha))

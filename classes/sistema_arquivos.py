@@ -104,8 +104,11 @@ class sistema_arquivos:
     def renomear_diretorio(self):
         pass
 
-    def criar_arquivo(self):
-        pass
+    def criar_arquivo(self, caminho: list, nome: str, criador: str):
+        inode_arquivo = inode(nome, criador, self.diretorio_atual)
+        self.diretorio_atual.adicionar_inode(inode_arquivo)
+        ## criar arquivo no disco.
+        self.disco.criar_arquivo(inode_arquivo)
 
     def remover_arquivo(self):
         pass
