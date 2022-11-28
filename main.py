@@ -50,7 +50,14 @@ def main():
                     print("uso: touch <nome>")
             case "rm":
                 try:
-                    so.arquivos.remover_arquivo(comando[1])
+                    if len(comando) == 1:
+                        print("rm: falta operando")
+                        print("Tente 'rm --help' para mais informações.")
+                    else:
+                        for diretorio in comando[1:]:
+                            caminho_lista = so.converter_caminho_para_lista(diretorio)
+                            so.arquivos.remover_arquivo(caminho_lista)
+
                 except Exception as e:
                     print(e)
                     print("erro ao remover arquivo")
@@ -92,7 +99,15 @@ def main():
                     print("uso: cat <nome>")
             case "cp":
                 try:
-                    so.arquivos.copiar_arquivo(comando[1], comando[2])
+                    if len(comando) <=2:
+                        if len(comando) == 1:
+                            print("cp: falta operando arquivo de origem.")
+                        if len(comando) == 2:
+                            print(f"cp: falta operando arquivo cópia de destino após '{comando[1]}'.")
+                    else:
+                        caminho_antigo = so.converter_caminho_para_lista(comando[1])
+                        caminho_copiado = so.converter_caminho_para_lista(comando[2])
+                        so.arquivos.copiar_arquivo(caminho_antigo, caminho_copiado)
                 except Exception as e:
                     print(e)
                     print("erro ao copiar arquivo")
