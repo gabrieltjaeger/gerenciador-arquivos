@@ -1,5 +1,5 @@
 class bloco:
-    def __init__(self, conteudo: str = '', tamanho_limite: int = 0):
+    def __init__(self, conteudo: str = '', tamanho_limite: int = 4096): ## 4KB, TÁ COMO TESTE
         self.conteudo = conteudo
         self.tamanho_limite = tamanho_limite
 
