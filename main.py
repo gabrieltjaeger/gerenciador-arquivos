@@ -69,7 +69,8 @@ def main():
                                 else:
                                     caminho = comando[3]
                                     conteudo = comando[1][1:-1]
-                                    so.arquivos.escrever_arquivo(caminho, conteudo)
+                                    caminho_lista = so.converter_caminho_para_lista(caminho)
+                                    so.arquivos.escrever_arquivo(caminho_lista, conteudo)
                         else:
                             print(' '.join(comando[1:]))
                 except Exception as e:
@@ -78,7 +79,13 @@ def main():
                     print("uso: echo \"<conteudo>\" >> <nome>")
             case "cat":
                 try:
-                    so.arquivos.ler_arquivo(comando[1])
+                    if len(comando) == 1:
+                        print("cat: falta operando")
+                        print("Tente 'cat --help' para mais informações.")
+                    else:
+                        for diretorio in comando[1:]:
+                            caminho_lista = so.converter_caminho_para_lista(diretorio)
+                            so.arquivos.ler_arquivo(caminho_lista)
                 except Exception as e:
                     print(e)
                     print("erro ao ler arquivo")
