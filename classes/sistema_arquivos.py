@@ -50,7 +50,7 @@ class sistema_arquivos:
         print("bash: rmdir: " + '/'.join(caminho) + ": Diretório inexistente")
         return False
 
-    def criar_inode(self, caminho: list, criador: str, tipo: str):  # PRONTA
+    def criar_inode(self, caminho: list, criador: str, tipo: str) -> inode:  # PRONTA
         if len(caminho) == 0:
             print("mkdir: caminho vazio ou inválido")
             return False
@@ -78,7 +78,7 @@ class sistema_arquivos:
             return False
         diretorio_onde_criar.adicionar_inode(novo_inode)
         self.disco.inodes.append(novo_inode)
-        return True
+        return novo_inode
 
     def encontrar_inode(self, caminho: list) -> inode:  # PRONTA
         diretorio_inicial = self.diretorio_atual
@@ -171,8 +171,25 @@ class sistema_arquivos:
         inode_a_renomear.mover(pai_novo_nome, novo_caminho[-1])
         return True
 
-    def remover_arquivo(self):
-        pass
+    def remover_arquivo(self, caminho: list): ## PRONTO?? DA UMA OLHADA JAEGER
+        inode_a_remover = self.encontrar_inode(caminho)
+        if inode_a_remover is False:
+            print("bash: rm: " + '/'.join(caminho) +
+                  ": Arquivo inexistente")
+            return False
+        if inode_a_remover.apontador_inode_pai is None:
+            print("bash: rm: " + '/'.join(caminho) +
+                  ": Arquivo inexistente")
+            return False
+        if inode_a_remover.tipo == 'd':
+            print("bash: rm: " + '/'.join(caminho) +
+                  ": Não é um arquivo")
+            return False
+        else:
+            inode_a_remover.apontador_inode_pai.remover_inode(inode_a_remover)
+            self.disco.inodes.remove(inode_a_remover)
+            return True
+
 
     def escrever_arquivo(self, caminho: list, conteudo: str):
         inode_a_escrever = self.encontrar_inode(caminho)
@@ -202,7 +219,7 @@ class sistema_arquivos:
         print(conteudo_arquivo)
         return True
 
-    def copiar_arquivo(self, caminho: list, novo_caminho: list):
+    def copiar_arquivo(self, caminho: list, novo_caminho: list): ## está duplicando o conteúdo do arquivo... pq?
         inode_a_copiar = self.encontrar_inode(caminho)
         if inode_a_copiar is False:
             print("bash: cp: " + '/'.join(caminho) +
