@@ -4,7 +4,7 @@ from .usuario import usuario
 
 class sistema_operacional:
     def __init__(self):
-        self.disco = disco(256, 4, 4)
+        self.disco = disco(256, 4, 1)
         self.arquivos = sistema_arquivos(self.disco, self)
         self.usuarios = []
         self.usuario_atual = None

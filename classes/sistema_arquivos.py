@@ -10,9 +10,9 @@ from colorama import Fore, Style
 class sistema_arquivos:
     def __init__(self, disco: disco, so: sistema_operacional):
         self.disco = disco
-        self.disco.inodes.append(
-            inode('/', "root", None, apontador_blocos=None))
-        self.diretorio_atual = self.disco.inodes[0]
+        self.root = inode('/', 'root', None, self.disco, apontador_blocos=None)
+        self.disco.adicionar_inode(self.root)
+        self.diretorio_atual = self.root
         self.so = so
 
     def alterar_diretorio_atual(self, _inode: inode):  # PRONTA
@@ -69,15 +69,15 @@ class sistema_arquivos:
                     return False
         novo_inode = None
         if tipo == 'd':
-            novo_inode = inode(inode_a_criar, criador, diretorio_onde_criar, apontador_blocos=None)
+            novo_inode = inode(inode_a_criar, criador, diretorio_onde_criar, self.disco, apontador_blocos=None)
         elif tipo == 'a':
-            novo_inode = inode(inode_a_criar, criador, diretorio_onde_criar, apontador_inodes=None)
+            novo_inode = inode(inode_a_criar, criador, diretorio_onde_criar, self.disco, apontador_inodes=None)
         else:
             print("bash: mkdir: " + '/'.join(caminho) +
                   ": Tipo de inode inválido")
             return False
         diretorio_onde_criar.adicionar_inode(novo_inode)
-        self.disco.inodes.append(novo_inode)
+        self.disco.adicionar_inode(novo_inode)
         return novo_inode
 
     def encontrar_inode(self, caminho: list) -> inode:  # PRONTA
@@ -86,7 +86,7 @@ class sistema_arquivos:
             if diretorio == '.':
                 continue
             if diretorio == '/':
-                diretorio = self.disco.inodes[0]
+                diretorio = self.root
             elif diretorio == '..':
                 if self.diretorio_atual.apontador_inode_pai is None:
                     self.alterar_diretorio_atual(diretorio_inicial)
@@ -167,7 +167,7 @@ class sistema_arquivos:
                     return False
                 else:
                     pai_novo_nome.remover_inode(filho_novo_nome)
-                    self.disco.inodes.remove(filho_novo_nome)
+                    self.disco.remover_inode(filho_novo_nome)
         inode_a_renomear.mover(pai_novo_nome, novo_caminho[-1])
         return True
 
@@ -187,7 +187,7 @@ class sistema_arquivos:
             return False
         else:
             inode_a_remover.apontador_inode_pai.remover_inode(inode_a_remover)
-            self.disco.inodes.remove(inode_a_remover)
+            self.disco.remover_inode(inode_a_remover)
             return True
 
 
