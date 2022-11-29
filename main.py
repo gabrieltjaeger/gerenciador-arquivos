@@ -35,6 +35,8 @@ def main():
         comando = comando.split(" ")
         comando = list(filter(None, comando))
         match comando[0]:
+            case "discotext":
+                print(so.disco.para_texto())
             case "touch":
                 try:
                     if len(comando) == 1:
@@ -68,14 +70,17 @@ def main():
                         print("echo: falta operando")
                         print("Tente 'echo --help' para mais informações.")
                     if len(comando) > 1:
-                        if len(comando) == 4:
-                            if comando[2] == ">>":
-                                if comando[1][0] != '"' or comando[1][-1] != '"':
-                                    print("echo: sintaxe inválida")
-                                    print("Tente 'echo --help' para mais informações.")
-                                else:
-                                    caminho = comando[3]
-                                    conteudo = comando[1][1:-1]
+                        if ">>" in comando:
+                            i = comando.index(">>")
+                            if i > 1:
+                                # texto está entre 1 e i
+                                if comando[1][0] == comando[i-1][-1] == '"':
+                                    texto = ''
+                                    for j in range(1, i):
+                                        texto += comando[j] + ' '
+                                    caminho = comando[i+1]
+                                    conteudo = texto.rstrip()
+                                    conteudo = conteudo.strip('"')
                                     caminho_lista = so.converter_caminho_para_lista(caminho)
                                     so.arquivos.escrever_arquivo(caminho_lista, conteudo)
                         else:
