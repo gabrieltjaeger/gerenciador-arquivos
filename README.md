@@ -8,9 +8,9 @@ Para rodar este código, é necessário que todas as pastas estejam localizadas 
 
 Após isso, é necessário apenas rodar em um terminal: 
 
-'''
+```
 python3 main.py
-'''
+```
 
 Ele simulará o funcionamento de um sistema de arquivos, como em um Sistema Operacional. Inicialmente, ele criará um usuário admin para que o usuário possa fazer as operações.
 
