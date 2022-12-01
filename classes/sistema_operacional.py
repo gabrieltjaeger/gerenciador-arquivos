@@ -1,10 +1,15 @@
 from .disco import disco
 from .sistema_arquivos import sistema_arquivos
 from .usuario import usuario
+import os
+
 
 class sistema_operacional:
     def __init__(self):
-        self.disco = disco(256, 4, 1)
+        self.disco = disco(256, 4, 1, self)
+        if os.path.exists('disco.txt'):
+            print('Disco encontrado. Carregando...')
+            self.disco.carregar('disco.txt')
         self.arquivos = sistema_arquivos(self.disco, self)
         self.usuarios = []
         self.usuario_atual = None
@@ -38,4 +43,3 @@ class sistema_operacional:
         else:
             caminho = [caminho]
         return caminho
-

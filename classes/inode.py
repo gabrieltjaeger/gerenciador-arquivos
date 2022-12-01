@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from .bloco import bloco
-from .disco import disco
-from .usuario import usuario
+from . import disco
+from . import usuario
 
 
 class inode:
@@ -20,6 +20,7 @@ class inode:
         self.ref_disco = ref_disco
         self.ref_disco.adicionar_inode(self)
         self.limite_de_blocos = ((self.ref_disco.tamanho_inodes * 1024) - 300) // (len(str(self.ref_disco.quantidade_blocos)))
+        self._tipo = self.get_tipo()
 
     def __str__(self) -> str:
         caminho = []
@@ -52,15 +53,26 @@ class inode:
                     continue
                 return _inode
 
-    @property
-    def tipo(self):
+    def get_tipo(self):
         if self.apontador_blocos is None:
             # É um diretório
             return 'd'
         if self.apontador_inodes is None:
             # É um arquivo
             return 'a'
-        raise Exception('Tipo de inode não identificado')
+    
+    def set_tipo(self, tipo):
+        if tipo == 'd':
+            self.apontador_blocos = None
+        elif tipo == 'a':
+            self.apontador_inodes = None
+        else:
+            raise Exception('Tipo de inode não identificado')
+        self._tipo = tipo
+            
+    @property
+    def tipo(self):
+        return self._tipo
 
     def listar(self):
         if self.tipo == 'd':
@@ -137,13 +149,16 @@ class inode:
 
     def para_texto(self):
         texto = ''
-        criador = str(self.criador)
-        if len(criador) < 260:
-            criador += '"' + '0' * (260 - len(criador))
-        texto += criador
+        nome = str(self.nome)
+        nome = nome[nome.rfind('/')+1:]
+        if len(nome) < 260:
+            nome += '"'
+            if len(nome) < 260:
+                nome += '0' * (260 - len(nome))
+        texto += nome
         tamanho = str(self.tamanho)
-        if int(tamanho) < 10:
-            tamanho = '0' + tamanho
+        if len(tamanho) < 10:
+            tamanho = '0' * (10 - len(tamanho)) + tamanho
         texto += tamanho
         data_criacao = ''
         dia = str(self.data_criacao.day)
@@ -186,8 +201,10 @@ class inode:
         if self.apontador_inode_pai is None:
             posicao_pai = '0' * len(str(self.ref_disco.quantidade_inodes))
         else:
-            print(list(self.ref_disco.bitmap_inodes.keys()))
-            posicao_pai = list(map(str, list(self.ref_disco.bitmap_inodes.keys()))).index(self.apontador_inode_pai.nome)
+            pai = str(self.apontador_inode_pai)
+            if pai == '/':
+                pai = self.apontador_inode_pai.nome
+            posicao_pai = list(map(str, list(self.ref_disco.bitmap_inodes.keys()))).index(pai)
             if len(str(posicao_pai)) < (x := len(str(self.ref_disco.quantidade_inodes))):
                 posicao_pai = '0' * (x - len(str(posicao_pai))) + str(posicao_pai)
         texto += posicao_pai
@@ -207,6 +224,7 @@ class inode:
             texto += '"'
             if len(texto) < x:
                 texto += '0' * (x - len(texto))
+            texto = texto[:-1] + self.tipo
         return texto
         
 

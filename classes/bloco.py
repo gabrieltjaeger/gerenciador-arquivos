@@ -1,4 +1,4 @@
-from .disco import disco
+from . import disco
 
 class bloco:
     def __init__(self, ref_disco: disco): ## 4KB, TÁ COMO TESTE

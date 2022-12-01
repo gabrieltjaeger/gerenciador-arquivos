@@ -11,10 +11,20 @@ class sistema_arquivos:
     def __init__(self, disco: disco, so: sistema_operacional):
         self.disco = disco
         self.root = inode('/', 'root', None, self.disco, apontador_blocos=None)
-        self.disco.adicionar_inode(self.root)
+        if len(self.disco.bitmap_inodes) > 0:
+            for _inode, bit in self.disco.bitmap_inodes.items():
+                self.root = _inode
+                break
+        else:
+            self.disco.adicionar_inode(self.root)
         self.diretorio_atual = self.root
         self.so = so
+        # print(self.diretorio_atual.apontador_inodes)
 
+
+    def set_root(self, _inode: inode):
+        self.root = _inode
+        
     def alterar_diretorio_atual(self, _inode: inode):  # PRONTA
         if _inode is None:
             return False
