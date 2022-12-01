@@ -16,25 +16,25 @@ Ele simulará o funcionamento de um sistema de arquivos, como em um Sistema Oper
 
 As operações disponíveis são:
 
-mkdir (nome do diretório) - cria um diretório;
+.mkdir (nome do diretório) - cria um diretório;
 
-cd (nome do diretório) - troca o diretório sendo modificado atualmente pelo diretório desejado.
+.cd (nome do diretório) - troca o diretório sendo modificado atualmente pelo diretório desejado.
 
-rmdir (nome do diretório) - remove o diretório;
+.rmdir (nome do diretório) - remove o diretório;
 
-ls - lista os arquivos e diretórios dentro do diretório atual;
+.ls - lista os arquivos e diretórios dentro do diretório atual;
 
-touch (nome do arquivo) - cria um arquivo, inicialmente vazio;
+.touch (nome do arquivo) - cria um arquivo, inicialmente vazio;
 
-rm (nome do arquivo) - remove aquele arquivo, o excluindo;
+.rm (nome do arquivo) - remove aquele arquivo, o excluindo;
 
-echo "(conteúdo)" >> (nome do arquivo) - escreve dentro do arquivo dado o conteúdo entre aspas;
+.echo "(conteúdo)" >> (nome do arquivo) - escreve dentro do arquivo dado o conteúdo entre aspas;
 
-cat (nome do arquivo) - lê o arquivo, retornando seu conteúdo.
+.cat (nome do arquivo) - lê o arquivo, retornando seu conteúdo.
 
-cp (arquivo antigo) (arquivo novo) - copia o conteúdo do arquivo antigo para um arquivo novo;
+.cp (arquivo antigo) (arquivo novo) - copia o conteúdo do arquivo antigo para um arquivo novo;
 
-mv (nome do arquivo/diretório) (novo nome do arquivo/diretório) - Renomeia o arquivo ou diretório dado;
+.mv (nome do arquivo/diretório) (novo nome do arquivo/diretório) - Renomeia o arquivo ou diretório dado;
 
 
 Além disto, todos os arquvios e diretórios criados ficam de maneira persistente no sistema.
